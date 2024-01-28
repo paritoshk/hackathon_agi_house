@@ -1,9 +1,13 @@
-def concat_files(files):
+def concat_files(files, max_size = 16384):
     total_text = ''
+    total_size = 2
     for file_name in files:
         total_text += "FILE NAME: " + file_name + "\n"
         with open(file_name, 'r') as f:
             text = f.read()
+            total_size += text.split()
+            if total_size > max_size:
+                break
             total_text += f"FILE CONTENT: \"\"\"{text}\"\"\"\n"
     return total_text
 

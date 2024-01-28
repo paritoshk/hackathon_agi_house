@@ -55,7 +55,8 @@ def generate_matches(query: str):
     num_keep = min(5, len(ret))
     paths = []
     for doc in ret:
-        paths.append(doc['name'])
+        if doc['name'].split('.')[-1] == 'py':
+            paths.append(doc['name'])
 
     return paths[:num_keep]
 
