@@ -3,3 +3,4 @@
 files/
 app/__pycache__/
 db/__pycache__/
+app/db/__pycache__/

@@ -5,7 +5,10 @@ def concat_files(files, max_size = 16384):
         total_text += "FILE NAME: " + file_name + "\n"
         with open(file_name, 'r') as f:
             text = f.read()
-            total_size += text.split()
+            try:
+                total_size += text.split()
+            except:
+                total_size += 1
             if total_size > max_size:
                 break
             total_text += f"FILE CONTENT: \"\"\"{text}\"\"\"\n"
