@@ -20,6 +20,30 @@ VALID_EXTENSIONS = [
     '.txt'
 ]
 
+def generate_matches(query: str):
+    global embeddings
+
+    results = embeddings.aggregate([
+        {
+            "$vectorSearch": {
+                "index": "vector_index",
+                "path": "embedding",
+                "queryVector": generate_embedding(query),
+                "numCandidates": 5,
+                "limit": 2
+            }
+        }
+    ])
+
+    ret = list(results)
+    num_keep = min(5, len(ret))
+    paths = []
+    for doc in ret:
+        paths.append(doc['name'])
+
+    return paths[:num_keep]
+
+
 print(f'Embedding directory: {dir_path}')
 for root, dirs, files in os.walk(dir_path):
     for file in files:
