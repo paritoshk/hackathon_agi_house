@@ -3,6 +3,12 @@ import zipfile
 import os
 import tempfile
 import requests
+import base64
+
+def get_file_content_as_base64(path):
+    with open(path, "rb") as f:
+        data = base64.b64encode(f.read()).decode()
+    return data
 
 st.title("NameItLater")
 
@@ -42,24 +48,28 @@ if st.session_state.get("info_submitted", False):
     st.subheader("Upload Your Repository")
     st.write("Please ZIP your entire repository and upload the ZIP file here.")
     
-    uploaded_file = st.file_uploader("Upload ZIP", type="py")
+    uploaded_file = st.file_uploader("Upload a ZIP file", type="zip")
     if uploaded_file is not None:
         with st.spinner("Processing ZIP file..."):
-            # Create a temporary directory to extract the ZIP
             with tempfile.TemporaryDirectory() as tmpdir:
                 zip_path = os.path.join(tmpdir, "uploaded.zip")
-                # Write the uploaded ZIP file to the temporary directory
                 with open(zip_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())
-                # Extract the ZIP file
                 with zipfile.ZipFile(zip_path, "r") as zip_ref:
                     zip_ref.extractall(tmpdir)
                 st.success("ZIP file processed successfully!")
 
-                # Process the extracted files as needed
-                # For example, you can list the extracted files
-                extracted_files = os.listdir(tmpdir)
-                st.write("Extracted Files:", extracted_files)
+                # List files and provide download links
+                st.subheader("Download Files")
+                for file_name in os.listdir(tmpdir):
+                    file_path = os.path.join(tmpdir, file_name)
+                    with open(file_path, "rb") as file:
+                        st.download_button(
+                            label=f"Download {file_name}",
+                            data=file,
+                            file_name=file_name,
+                            mime="text/plain"
+                        )
 
                 # TODO: Send the files to your MongoDB vector database maker endpoint
                 # This typically involves either making an API call or performing some database operation.
