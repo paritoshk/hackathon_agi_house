@@ -4,6 +4,14 @@ import os
 import tempfile
 import requests
 import base64
+import sys
+sys.path.append("../")
+sys.path.append("../db/")
+from db.index import generate_matches
+import time
+from utils import * 
+import together
+together.api_key = '02f64462e7d099ceadef8761a30afe2779db1027eddfec587869f4ea28a97013'
 
 def get_file_content_as_base64(path):
     with open(path, "rb") as f:
@@ -59,18 +67,6 @@ if st.session_state.get("info_submitted", False):
                     zip_ref.extractall(tmpdir)
                 st.success("ZIP file processed successfully!")
 
-                # List files and provide download links
-                st.subheader("Download Files")
-                for file_name in os.listdir(tmpdir):
-                    file_path = os.path.join(tmpdir, file_name)
-                    with open(file_path, "rb") as file:
-                        st.download_button(
-                            label=f"Download {file_name}",
-                            data=file,
-                            file_name=file_name,
-                            mime="text/plain"
-                        )
-
                 # TODO: Send the files to your MongoDB vector database maker endpoint
                 # This typically involves either making an API call or performing some database operation.
                 # Example (you will need to replace this with your actual code):
@@ -102,15 +98,23 @@ if st.session_state.get("info_submitted", False):
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
-            assistant_response = random.choice(
-                [
-                    "Hello curious code explorer! How can I assist you today?",
-                    "Hi, fellow curious code explorer! Is there anything I can help you with?",
-                    "Do you need help?",
-                ]
-            )
+            # assistant_response = random.choice(
+            #     [
+            #         "Hello curious code explorer! How can I assist you today?",
+            #         "Hi, fellow curious code explorer! Is there anything I can help you with?",
+            #         "Do you need help?",
+            #     ]
+            # )
+            paths = generate_matches(prompt) 
+            concat_scripts = concat_files(paths)
+            final_prompt = synthesize_prompt(prompt, concat_scripts)
+            assistant_response = together.Complete.create(prompt=final_prompt, model="WizardLM/WizardCoder-Python-34B-V1.0")
+            temp = assistant_response["output"]["choices"][0]["text"]
+            paths = [path.split("mongo-python-driver/")[1] for path in paths]
+            final = ",".join(paths) + temp
+
             # Simulate stream of response with milliseconds delay
-            for chunk in assistant_response.split():
+            for chunk in final.split():
                 full_response += chunk + " "
                 time.sleep(0.05)
                 # Add a blinking cursor to simulate typing

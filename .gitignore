@@ -1,2 +1,5 @@
 .conda
 .venv
+files/
+app/__pycache__/
+db/__pycache__/
