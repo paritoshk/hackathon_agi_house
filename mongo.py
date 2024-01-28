@@ -22,13 +22,33 @@ def generate_embedding(query: str):
     r = requests.post(url, json=payload, headers=headers)
     return r.json()['data'][0]['embedding']
 
-def generate_instruction(query: str):
-    pass
+def generate_matches(query: str):
+    global embeddings
+
+    results = embeddings.aggregate([
+        {
+            "$vectorSearch": {
+                "index": "vector_index",
+                "path": "embedding",
+                "queryVector": generate_embedding(query),
+                "numCandidates": 5,
+                "limit": 2
+            }
+        }
+    ])
+
+    ret = list(results)
+    num_keep = min(5, len(ret))
+    paths = []
+    for doc in ret:
+        paths.append(doc['name'])
+
+    return paths[:num_keep]
 
 # print(generate_embedding("cat"))
 
-for doc in embeddings.find():
-    print(doc['name'])
+# for doc in embeddings.find():
+#     print(doc['name'])
 
 # embeddings.insert_one({"name": "cat", "embedding": generate_embedding("cat")})
 
@@ -43,26 +63,23 @@ for doc in embeddings.find():
 
 # client.
 
+# print(generate_embedding("import math"))
+
+print(generate_matches("import math"))
+
+
 results = embeddings.aggregate([
     {
-        # '$vectorSearch': {
-        #     'queryVector': generate_embedding("import math"),
-        #     'path': 'File Embeddings',
-        #     'numCandidates': 5,
-        #     'limit': 5,
-        #     'index': 'vector_index'
-        # }
         "$vectorSearch": {
             "index": "vector_index",
-            "path": "File Embeddings",
+            "path": "embedding",
             "queryVector": generate_embedding("import math"),
             "numCandidates": 5,
-            "limit": 5
+            "limit": 2
         }
     }
 ])
 
-print(list(results))
-# for document in results:
-#     print(document)
-
+# print(list(results))
+for doc in list(results):
+    print(doc['name'])
