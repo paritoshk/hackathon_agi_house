@@ -32,7 +32,7 @@ def generate_embedding(query: str):
 
 # args = parser.parse_args()
 # dir_path = args.path
-client = pymongo.MongoClient('mongodb+srv://zhaoleon03:Kul9CcMGhImcPhjC@cluster0.gxmrbvy.mongodb.net/?retryWrites=true&w=majority')
+client = pymongo.MongoClient(MONGO_DB_CONNECTION)
 db = client['RAG-Hackathon']
 embeddings = db['File Embeddings']
 
