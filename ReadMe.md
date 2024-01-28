@@ -5,8 +5,7 @@ Overview
 This document provides a detailed explanation of the process flow for a chat-based interface application. The application uses Streamlit for the front-end, interacts with a large codebase through a vector database, and employs a Retrieval-Augmented Generation (RAG) model for processing and generating responses.
 
 # Process Flow Diagram
-'''
-
+```
 +----------------------------------------+
 | User Interaction with Streamlit        |
 +----------------------------------------+
@@ -39,7 +38,7 @@ This document provides a detailed explanation of the process flow for a chat-bas
                         | (Feedback Loop to Improve)
                         --------------------------------
 
-'''
+```
 
 ## Process Steps
 User Interaction with Streamlit: The user initiates the process by interacting with the Streamlit front-end. This interaction typically involves submitting a query or request related to the codebase.
