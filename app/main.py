@@ -1,6 +1,8 @@
 import streamlit as st
-import random
-import time
+import zipfile
+import os
+import tempfile
+import requests
 
 st.title("NameItLater")
 
@@ -36,16 +38,41 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Step 2: File Upload and Chat, appear only after information submission
-if st.session_state.info_submitted:
-    # File Upload
-    st.subheader("File Upload")
-    uploaded_files = st.file_uploader("Upload your files", accept_multiple_files=True)
-    if uploaded_files:
-        with st.spinner("Processing files..."):
-            # Process your files here
-            time.sleep(5)  # Replace with actual file processing logic
-        st.success("Files processed successfully!")
+if st.session_state.get("info_submitted", False):
+    st.subheader("Upload Your Repository")
+    st.write("Please ZIP your entire repository and upload the ZIP file here.")
+    
+    uploaded_file = st.file_uploader("Upload ZIP", type="py")
+    if uploaded_file is not None:
+        with st.spinner("Processing ZIP file..."):
+            # Create a temporary directory to extract the ZIP
+            with tempfile.TemporaryDirectory() as tmpdir:
+                zip_path = os.path.join(tmpdir, "uploaded.zip")
+                # Write the uploaded ZIP file to the temporary directory
+                with open(zip_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                # Extract the ZIP file
+                with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                    zip_ref.extractall(tmpdir)
+                st.success("ZIP file processed successfully!")
 
+                # Process the extracted files as needed
+                # For example, you can list the extracted files
+                extracted_files = os.listdir(tmpdir)
+                st.write("Extracted Files:", extracted_files)
+
+                # TODO: Send the files to your MongoDB vector database maker endpoint
+                # This typically involves either making an API call or performing some database operation.
+                # Example (you will need to replace this with your actual code):
+                # for file_name in extracted_files:
+                #     file_path = os.path.join(tmpdir, file_name)
+                #     with open(file_path, 'rb') as f:
+                #         # Replace 'your_endpoint' with your actual endpoint and adjust the request as needed
+                #         response = requests.post('your_endpoint', files={'file': f})
+                #         # Handle the response as needed
+
+# Other parts of your Streamlit app (user info form, chat interface, etc.)
+# ...
     # Chat Interface
     st.subheader("Chat with Us")
     # Display chat messages from history on app rerun
