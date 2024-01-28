@@ -17,7 +17,7 @@ def get_file_content_as_base64(path):
         data = base64.b64encode(f.read()).decode()
     return data
 
-st.title("NameItLater")
+st.title("Decoder AI")
 
 # Initialize session state for user information and submission status
 if "user_info" not in st.session_state:
@@ -80,6 +80,15 @@ if st.session_state.get("info_submitted", False):
 # ...
     # Chat Interface
     st.subheader("Chat with Us")
+    # Initialize chat history if not already done
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    # Check if chat history is empty and initiate chat with a bot message
+    if not st.session_state.messages:
+        bot_init_message = "Hi, fellow curious code explorer! Thank you for uploading your codebase - is there anything I can help you with?"
+        st.session_state.messages.append({"role": "assistant", "content": bot_init_message})
+
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
