@@ -10,7 +10,7 @@ from db.index import generate_matches
 import time
 from utils import * 
 import together
-together.api_key = '02f64462e7d099ceadef8761a30afe2779db1027eddfec587869f4ea28a97013'
+together.api_key = LEON_TOGETHER_KEY
 
 def get_file_content_as_base64(path):
     with open(path, "rb") as f:
