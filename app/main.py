@@ -50,6 +50,25 @@ if not st.session_state.info_submitted:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Custom HTML for spinner
+spinner_html = """
+<div style="display: flex; align-items: center; justify-content: center;">
+    <div class="loader" style="border: 4px solid #f3f3f3; 
+                               border-top: 4px solid #3498db; 
+                               border-radius: 50%; 
+                               width: 40px; 
+                               height: 40px; 
+                               animation: spin 2s linear infinite;">
+    </div>
+</div>
+<style>
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+"""
+
 # Step 2: File Upload and Chat, appear only after information submission
 if st.session_state.get("info_submitted", False):
     st.subheader("Upload Your Repository")
@@ -104,30 +123,30 @@ if st.session_state.get("info_submitted", False):
 
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            full_response = ""
-            # assistant_response = random.choice(
-            #     [
-            #         "Hello curious code explorer! How can I assist you today?",
-            #         "Hi, fellow curious code explorer! Is there anything I can help you with?",
-            #         "Do you need help?",
-            #     ]
-            # )
-            paths = generate_matches(prompt) 
-            paths = [path[3:] for path in paths]
-            concat_scripts = concat_files(paths)
-            final_prompt = synthesize_prompt(prompt, concat_scripts, st.session_state.user_info)
-            assistant_response = together.Complete.create(prompt=final_prompt, model="codellama/CodeLlama-34b-Python-hf")
-            temp = assistant_response["output"]["choices"][0]["text"]
-            paths = [path.split("mongo-python-driver/")[1] for path in paths]
-            final = ",".join(paths) + temp
+            with st.empty():
+                st.markdown(spinner_html, unsafe_allow_html=True)
+                paths = generate_matches(prompt) 
+                paths = [path[3:] for path in paths]
+                concat_scripts = concat_files(paths)
+                final_prompt = synthesize_prompt(prompt, concat_scripts, st.session_state.user_info)
+                assistant_response = together.Complete.create(prompt=final_prompt, model="mistralai/Mixtral-8x7B-Instruct-v0.1")
+                temp = assistant_response["output"]["choices"][0]["text"]
 
-            # Simulate stream of response with milliseconds delay
-            for chunk in final.split():
-                full_response += chunk + " "
-                time.sleep(0.05)
-                # Add a blinking cursor to simulate typing
-                message_placeholder.markdown(full_response + "▌")
-            message_placeholder.markdown(full_response)
+                for path in paths:
+                    with st.sidebar.expander(path):
+                        st.text(print_file(path))
+
+                # paths = [path.split("mongo-python-driver/")[1] for path in paths]
+                # final = ",".join(paths) + temp
+                full_response = ""
+                final = temp
+                # Simulate stream of response with milliseconds delay
+                for chunk in final.split():
+                    full_response += chunk + " "
+                    time.sleep(0.05)
+                    # Add a blinking cursor to simulate typing
+                    st.markdown(full_response + "▌")
+            # st.markdown(full_response)
+
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": full_response})

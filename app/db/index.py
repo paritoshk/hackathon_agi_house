@@ -45,14 +45,14 @@ def generate_matches(query: str):
                 "index": "vector_index",
                 "path": "embedding",
                 "queryVector": generate_embedding(query),
-                "numCandidates": 5,
-                "limit": 2
+                "numCandidates": 4,
+                "limit": 4
             }
         }
     ])
 
     ret = list(results)
-    num_keep = min(5, len(ret))
+    num_keep = min(6, len(ret))
     paths = []
     for doc in ret:
         if doc['name'].split('.')[-1] == 'py':

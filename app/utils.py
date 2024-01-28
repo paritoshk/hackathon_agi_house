@@ -3,16 +3,28 @@ def concat_files(files, max_size = 16384):
     total_size = 2
     for file_name in files:
         total_text += "FILE NAME: " + file_name + "\n"
+        print(file_name)
+        try:
+            with open(file_name, 'r') as f:
+                text = f.read()
+                try:
+                    total_size += text.split()
+                except:
+                    total_size += 1
+                if total_size > max_size:
+                    break
+                total_text += f"FILE CONTENT: \"\"\"{text}\"\"\"\n"
+        except:
+            pass
+    return total_text
+
+def print_file(file_name):
+    try:
         with open(file_name, 'r') as f:
             text = f.read()
-            try:
-                total_size += text.split()
-            except:
-                total_size += 1
-            if total_size > max_size:
-                break
-            total_text += f"FILE CONTENT: \"\"\"{text}\"\"\"\n"
-    return total_text
+            return text
+    except:
+        return ""
 
 def synthesize_prompt(prompt, files, user_info: str):
     context = (
