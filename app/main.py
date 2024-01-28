@@ -5,8 +5,7 @@ import tempfile
 import requests
 import base64
 import sys
-sys.path.append("../")
-sys.path.append("../db/")
+sys.path.append("db")
 from db.index import generate_matches
 import time
 from utils import * 
@@ -106,6 +105,7 @@ if st.session_state.get("info_submitted", False):
             #     ]
             # )
             paths = generate_matches(prompt) 
+            paths = [path[3:] for path in paths]
             concat_scripts = concat_files(paths)
             final_prompt = synthesize_prompt(prompt, concat_scripts)
             assistant_response = together.Complete.create(prompt=final_prompt, model="WizardLM/WizardCoder-Python-34B-V1.0")
