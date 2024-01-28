@@ -5,7 +5,7 @@ Overview
 This document provides a detailed explanation of the process flow for a chat-based interface application. The application uses Streamlit for the front-end, interacts with a large codebase through a vector database, and employs a Retrieval-Augmented Generation (RAG) model for processing and generating responses.
 
 # Process Flow Diagram
-
+```
 +----------------------------------------+
 | User Interaction with Streamlit        |
 +----------------------------------------+
@@ -38,6 +38,8 @@ This document provides a detailed explanation of the process flow for a chat-bas
                         | (Feedback Loop to Improve)
                         --------------------------------
 
+```
+
 ## Process Steps
 User Interaction with Streamlit: The user initiates the process by interacting with the Streamlit front-end. This interaction typically involves submitting a query or request related to the codebase.
 
@@ -63,3 +65,7 @@ Retrieval-Augmented Generation (RAG) combines the power of retrieval (finding re
 Response Generation and Tree Structure Creation: Based on the output from the RAG model, this step generates the response, which could be code suggestions, explanations, etc. A tree structure might be created to visually represent the relationships and dependencies in the data or code.
 
 Feedback Loop: There's an implicit feedback loop in the system. User interactions and system responses contribute to continuous learning and improvement of the model, enhancing accuracy and relevance over time.)
+
+
+![image](https://github.com/paritoshk/hackathon_agi_house/assets/9400939/176aee05-c07a-4b09-abfe-f70dc6880076)
+

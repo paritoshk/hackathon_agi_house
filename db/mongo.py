@@ -66,20 +66,3 @@ def generate_matches(query: str):
 # print(generate_embedding("import math"))
 
 print(generate_matches("import math"))
-
-
-results = embeddings.aggregate([
-    {
-        "$vectorSearch": {
-            "index": "vector_index",
-            "path": "embedding",
-            "queryVector": generate_embedding("import math"),
-            "numCandidates": 5,
-            "limit": 2
-        }
-    }
-])
-
-# print(list(results))
-for doc in list(results):
-    print(doc['name'])
