@@ -7,6 +7,11 @@ def concat_files(files):
             total_text += f"FILE CONTENT: \"\"\"{text}\"\"\"\n"
     return total_text
 
-def synthesize_prompt(prompt, files):
-    context = f"Here is some context code: \n \"\"\"{files}\"\"\"" + "Referencing the FILE_NAME and using the python code in FILE_CONTEXT sections, can you answer the following question:\n"
-    return context + prompt
+def synthesize_prompt(prompt, files, user_info: str):
+    context = (
+        f"Your are chatting with a user with this information: {user_info}. "
+        f"Here is some context code: \n\"\"\"{files}\"\"\" "
+        "Referencing the FILE_NAME and using the python code in FILE_CONTEXT sections, "
+        f"can you answer the following question:\n{prompt}"
+    )
+    return context

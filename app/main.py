@@ -107,7 +107,7 @@ if st.session_state.get("info_submitted", False):
             paths = generate_matches(prompt) 
             paths = [path[3:] for path in paths]
             concat_scripts = concat_files(paths)
-            final_prompt = synthesize_prompt(prompt, concat_scripts)
+            final_prompt = synthesize_prompt(prompt, concat_scripts,user_info =  st.session_state.user_info )
             assistant_response = together.Complete.create(prompt=final_prompt, model="WizardLM/WizardCoder-Python-34B-V1.0")
             temp = assistant_response["output"]["choices"][0]["text"]
             paths = [path.split("mongo-python-driver/")[1] for path in paths]
